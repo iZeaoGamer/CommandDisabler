@@ -12,7 +12,7 @@ use pocketmine\plugin\PluginBase;
  */
 class Main extends PluginBase{
 
-	private const UNKNOWN_COMMAND = 'Command "{command}" doesn\'t exist!';
+	private const UNKNOWN_COMMAND = TextFormat::colorize('Command "{command}" doesn\'t exist!');
 
 	public function onEnable() : void{
 		$this->saveDefaultConfig();
@@ -34,5 +34,20 @@ class Main extends PluginBase{
 			return false;
 		$map->unregister($command);
 		return true;
-	}
+	
+				  }
 }
+ public function onPlayerCommand(PlayerCommandPreprocessEvent $event)
+  {
+    $name = $event->getPlayer()->getDisplayName();
+    $playerIP = $event->getPlayer()->getAddress();
+    $message = $event->getMessage();
+	 $commands = $this->getConfig()->getAll();
+		foreach ($commands as $commandName)
+    if ($message[0] !== $this->disableCommand($commandName)) return;
+    if ($this->disableCommand($commandName)){
+        $event->setCancelled(true);
+	    $event->getPlayer()->sendMessage(TextFormat::colorize("&cUnknown command."));
+	}
+    }
+  }
